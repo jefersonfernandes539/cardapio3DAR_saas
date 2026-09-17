@@ -17,6 +17,17 @@ const nextConfig = {
   // Let Next.js transpile our internal workspace packages instead of
   // requiring them to be pre-built.
   transpilePackages: ["@cardapio/ui", "@cardapio/db"],
+  experimental: {
+    // @cardapio/db's Prisma Client lives in the pnpm virtual store (hoisted
+    // dependency, not a direct one), and Next's serverless output tracer
+    // doesn't follow the dynamic require() Prisma uses to load its native
+    // query engine — the .so.node binary silently gets left out of the
+    // deployed function, which only fails at request time on Vercel
+    // ("could not locate the Query Engine"). This forces it in explicitly.
+    outputFileTracingIncludes: {
+      "/**": ["../../node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/*.node"],
+    },
+  },
   images: {
     // Next's image optimizer resizes images *server-side*, so it fetches the
     // source URL from wherever this dev server happens to be running. This
