@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { prisma } from "@cardapio/db";
 import { requireSession } from "@/lib/session";
 import { Button } from "@cardapio/ui";
@@ -16,9 +17,15 @@ export default async function DishesPage() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Pratos</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Pratos</h1>
+          <p className="text-sm text-gray-500">{dishes.length} prato{dishes.length === 1 ? "" : "s"} cadastrado{dishes.length === 1 ? "" : "s"}</p>
+        </div>
         <Link href="/dashboard/dishes/new">
-          <Button>Novo prato</Button>
+          <Button>
+            <Plus className="h-4 w-4" strokeWidth={2.25} />
+            Novo prato
+          </Button>
         </Link>
       </div>
 

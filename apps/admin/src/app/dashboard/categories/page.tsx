@@ -13,7 +13,10 @@ export default async function CategoriesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Categorias</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Categorias</h1>
+        <p className="text-sm text-gray-500">Organize as seções do seu cardápio e a ordem de exibição.</p>
+      </div>
       <CategoryManager
         initialCategories={categories.map((c) => ({ id: c.id, name: c.name, order: c.order, dishCount: c._count.dishes }))}
       />

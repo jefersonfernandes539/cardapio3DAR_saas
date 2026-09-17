@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@cardapio/ui";
+import { ChevronDown, ChevronUp, Plus, Tags, Trash2 } from "lucide-react";
+import { Button, EmptyState } from "@cardapio/ui";
 
 export interface CategoryRow {
   id: string;
@@ -85,10 +86,11 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Nova categoria (ex.: Sobremesas)"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           onKeyDown={(e) => e.key === "Enter" && handleCreate()}
         />
         <Button onClick={handleCreate} disabled={busy}>
+          <Plus className="h-4 w-4" strokeWidth={2.25} />
           Adicionar
         </Button>
       </div>
@@ -97,47 +99,54 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
         {categories.map((category, index) => (
           <li
             key={category.id}
-            className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white p-3 shadow-card"
+            className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 pl-2 shadow-card"
           >
-            <div className="flex flex-col">
+            <div className="flex flex-col text-gray-300">
               <button
                 disabled={index === 0}
                 onClick={() => handleMove(index, -1)}
-                className="text-gray-400 hover:text-gray-700 disabled:opacity-30"
+                className="rounded hover:text-gray-600 disabled:opacity-30"
                 aria-label="Mover para cima"
               >
-                ▲
+                <ChevronUp className="h-4 w-4" strokeWidth={2} />
               </button>
               <button
                 disabled={index === categories.length - 1}
                 onClick={() => handleMove(index, 1)}
-                className="text-gray-400 hover:text-gray-700 disabled:opacity-30"
+                className="rounded hover:text-gray-600 disabled:opacity-30"
                 aria-label="Mover para baixo"
               >
-                ▼
+                <ChevronDown className="h-4 w-4" strokeWidth={2} />
               </button>
             </div>
 
             <input
               defaultValue={category.name}
               onBlur={(e) => e.target.value !== category.name && handleRename(category.id, e.target.value)}
-              className="flex-1 rounded-lg border border-transparent px-2 py-1 text-sm font-medium hover:border-gray-200 focus:border-brand-500 focus:outline-none"
+              className="flex-1 rounded-lg border border-transparent px-2 py-1.5 text-sm font-semibold text-gray-800 transition-colors hover:border-gray-200 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
 
-            <span className="text-xs text-gray-400">{category.dishCount} prato(s)</span>
+            <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
+              {category.dishCount} prato{category.dishCount === 1 ? "" : "s"}
+            </span>
 
             <button
               onClick={() => handleDelete(category.id)}
-              className="text-sm font-medium text-red-500 hover:text-red-700"
+              aria-label="Excluir categoria"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
             >
-              Excluir
+              <Trash2 className="h-4 w-4" strokeWidth={1.75} />
             </button>
           </li>
         ))}
       </ul>
 
       {categories.length === 0 && (
-        <p className="text-sm text-gray-500">Nenhuma categoria ainda. Crie a primeira acima.</p>
+        <EmptyState
+          icon={<Tags className="h-6 w-6" strokeWidth={1.75} />}
+          title="Nenhuma categoria ainda"
+          description="Crie a primeira acima para começar a montar o cardápio."
+        />
       )}
     </div>
   );

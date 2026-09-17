@@ -21,7 +21,7 @@ export default async function PlanoPage() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold">Plano</h1>
+      <h1 className="mb-1 text-2xl font-bold text-gray-900">Plano</h1>
       <p className="mb-6 text-sm text-gray-500">
         Nenhum meio de pagamento está integrado ainda — trocar de plano aqui é só para testar os limites
         localmente antes do Stripe entrar.

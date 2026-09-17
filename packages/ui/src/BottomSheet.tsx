@@ -32,7 +32,7 @@ export function BottomSheet({ open, onClose, children, className }: BottomSheetP
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <button
         aria-label="Fechar"
-        className="absolute inset-0 bg-black/40 animate-fade-in"
+        className="absolute inset-0 bg-gray-900/50 backdrop-blur-[2px] animate-fade-in"
         onClick={onClose}
       />
       <div
@@ -43,8 +43,8 @@ export function BottomSheet({ open, onClose, children, className }: BottomSheetP
           className,
         )}
       >
-        <div className="sticky top-0 z-10 flex justify-center bg-white pt-2">
-          <span className="h-1.5 w-10 rounded-full bg-gray-300" />
+        <div className="sticky top-0 z-10 flex justify-center bg-white/95 backdrop-blur pt-3">
+          <span className="h-1.5 w-10 rounded-full bg-gray-200" />
         </div>
         {children}
       </div>

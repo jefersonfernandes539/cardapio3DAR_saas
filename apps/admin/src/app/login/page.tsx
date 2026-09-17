@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loader2, Lock, Mail, UtensilsCrossed } from "lucide-react";
 import { Button } from "@cardapio/ui";
 
 export default function LoginPage() {
@@ -29,38 +30,68 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-card">
-        <h1 className="mb-1 text-xl font-bold">Entrar no painel</h1>
-        <p className="mb-6 text-sm text-gray-500">Gerencie o cardápio digital do seu restaurante.</p>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="pointer-events-none absolute inset-0 bg-brand-radial from-brand-100 via-gray-50 to-gray-50" />
+      <div className="pointer-events-none absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand-300/25 blur-3xl" />
 
-        <label className="mb-1 block text-sm font-medium text-gray-700">E-mail</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-elevated"
+      >
+        <div className="h-1.5 w-full bg-gradient-to-r from-brand-400 via-brand-600 to-brand-500" />
 
-        <label className="mb-1 block text-sm font-medium text-gray-700">Senha</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
+        <div className="p-8">
+          <div className="mb-6 flex flex-col items-center text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-glow">
+              <UtensilsCrossed className="h-6 w-6" strokeWidth={1.75} />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">Entrar no painel</h1>
+            <p className="mt-1 text-sm text-gray-500">Gerencie o cardápio digital do seu restaurante.</p>
+          </div>
 
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">E-mail</label>
+          <div className="relative mb-4">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" strokeWidth={1.75} />
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/60 py-2.5 pl-9 pr-3 text-sm transition-colors focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            />
+          </div>
 
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Entrando…" : "Entrar"}
-        </Button>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">Senha</label>
+          <div className="relative mb-5">
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" strokeWidth={1.75} />
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/60 py-2.5 pl-9 pr-3 text-sm transition-colors focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            />
+          </div>
 
-        <p className="mt-4 text-xs text-gray-400">
-          Demo: dono@saborbrasil.com / admin123 (após rodar o seed)
-        </p>
+          {error && (
+            <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+          )}
+
+          <Button type="submit" disabled={loading} className="w-full" size="lg">
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.5} />
+                Entrando…
+              </>
+            ) : (
+              "Entrar"
+            )}
+          </Button>
+
+          <p className="mt-5 text-center text-xs text-gray-400">
+            Demo: dono@saborbrasil.com / admin123 (após rodar o seed)
+          </p>
+        </div>
       </form>
     </main>
   );
