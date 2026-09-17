@@ -2,7 +2,11 @@
 // Shared by apps/menu (read-only, public) and apps/admin (read/write, authenticated).
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" covers local dev; "rhel-openssl-3.0.x" is Vercel's serverless
+  // function runtime, which differs from the build environment — without it
+  // Prisma Client can't find its query engine binary at request time there.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
