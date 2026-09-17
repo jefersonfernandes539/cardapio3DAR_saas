@@ -1,0 +1,9 @@
+{
+  "extends": "@cardapio/config/tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist"
+  },
+  "include": ["src", "prisma"]
+}

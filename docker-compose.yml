@@ -1,0 +1,20 @@
+# Local Postgres for development. Not required in production (use a managed
+# Postgres like Neon/Supabase/RDS there) — this is purely a convenience so
+# the MVP runs with a single `docker compose up`.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cardapio
+      POSTGRES_PASSWORD: cardapio
+      POSTGRES_DB: cardapio_ar
+    ports:
+      # Host port 5434 to avoid clashing with other local Postgres instances
+      # on the default 5432. Update DATABASE_URL below if you change this.
+      - "5434:5432"
+    volumes:
+      - cardapio_ar_pgdata:/var/lib/postgresql/data
+
+volumes:
+  cardapio_ar_pgdata:

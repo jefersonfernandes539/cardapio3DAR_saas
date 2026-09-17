@@ -1,0 +1,112 @@
+// Prisma schema for the Cardapio AR SaaS MVP.
+// Shared by apps/menu (read-only, public) and apps/admin (read/write, authenticated).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled connection — used by the running app (apps/menu, apps/admin).
+  // Required because serverless (Vercel) opens many short-lived connections,
+  // which a normal Postgres connection limit can't handle without a pooler.
+  url       = env("DATABASE_URL")
+  // Unpooled connection — used only by `prisma migrate`. Supabase's pooler
+  // (Supavisor, transaction mode) doesn't support the session-level
+  // features migrations need, so migrations must bypass it. For local dev
+  // (plain Docker Postgres, no pooler involved) this is the same value as
+  // DATABASE_URL — see .env.example.
+  directUrl = env("DIRECT_URL")
+}
+
+/// A restaurant tenant. Every other domain model hangs off this.
+model Restaurant {
+  id         String   @id @default(cuid())
+  name       String
+  /// Public URL slug, e.g. /r/sabor-brasil
+  slug       String   @unique
+  logoUrl    String?
+  /// Primary theme color (hex) applied to the client-facing menu.
+  themeColor String   @default("#EA580C")
+  /// Subscription tier — gates dish/3D-dish/staff counts, see packages/db/src/plans.ts.
+  /// No billing provider wired up yet: this is set directly (seed, or the
+  /// dashboard's plan switcher) until Stripe checkout/webhooks land.
+  plan       Plan     @default(FREE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  users      User[]
+  categories Category[]
+
+  @@map("restaurants")
+}
+
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+}
+
+/// Restaurant owner/staff who can log in to apps/admin.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(OWNER)
+  createdAt    DateTime @default(now())
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId])
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  STAFF
+}
+
+/// A menu category (e.g. "Entradas"), ordered within its restaurant.
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  /// Manual display order (ascending) chosen by the restaurant admin.
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  dishes Dish[]
+
+  @@index([restaurantId])
+  @@map("categories")
+}
+
+/// A single menu item, optionally with a 3D model for AR viewing.
+model Dish {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  /// Stored in the local currency's smallest-denomination-agnostic decimal form, e.g. 42.90.
+  price       Decimal  @db.Decimal(10, 2)
+  /// 2D photo, always required as the fallback rendering.
+  imageUrl    String?
+  /// Optional glTF/GLB model, used by <model-viewer> for 3D + Android Scene Viewer AR.
+  model3dUrl  String?
+  /// Optional USDZ model, used for iOS AR Quick Look (model-viewer picks it automatically on iOS).
+  usdzUrl     String?
+  order       Int      @default(0)
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@map("dishes")
+}
